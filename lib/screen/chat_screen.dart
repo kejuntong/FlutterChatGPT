@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:chat_gpt_exploring/chat_gpt_api/chat_gpt_sdk.dart';
 import 'package:chat_gpt_exploring/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -168,9 +169,14 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _btnTest() {
     return ElevatedButton(
       onPressed: () {
-        // tController.sink.add(null);
+        tController.sink.add(null);
         chatController.sink.add(null);
         _testChat();
+        // TODO kejun not show why toast not working
+        // Fluttertoast.showToast(
+        //     msg: "This is a Toast message",
+        //     toastLength: Toast.LENGTH_SHORT,
+        // );
       },
       child: const Text('Test'),
     );
@@ -181,7 +187,20 @@ class _ChatScreenState extends State<ChatScreen> {
       // stream: tController.stream,
       stream: chatController.stream,
       builder: (context, snapshot) {
-        final text = snapshot.data?.choices.last.message.content ?? "Loading..."; // TODO kejun, message role
+
+        final usage = snapshot.data?.usage.totalTokens ?? 0;
+        // Fluttertoast.showToast(
+        //     msg: "token used: $usage",
+        //     toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.CENTER,
+        //     timeInSecForIosWeb: 1,
+        //     backgroundColor: Colors.red,
+        //     textColor: Colors.white,
+        //     fontSize: 16.0
+        // );
+        // TODO: kejun why tf toast not working ^^
+        final content = snapshot.data?.choices.last.message.content ?? "Loading...";
+        final text = "token used: $usage\n\n$content"; // TODO kejun, message role
         return Container(
           margin: const EdgeInsets.symmetric(vertical: 32.0),
           padding: const EdgeInsets.symmetric(horizontal: 16.0),

@@ -1,5 +1,7 @@
 import 'package:chat_gpt_exploring/screen/chat_screen.dart';
+import 'package:chat_gpt_exploring/screen/generate_img_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() => runApp(const MyApp());
 
@@ -36,7 +38,10 @@ class HomeScreen extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                // TODO
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) => const GenImgScreen()),
+                );
               },
               child: const Text('Image Generation'),
             ),

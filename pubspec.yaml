@@ -30,10 +30,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  fluttertoast: ^8.2.1
   dio: ^5.0.1
   shared_preferences: ^2.0.17
   cupertino_icons: ^1.0.2
   easy_loading_button: ^0.3.2
+
 
 dev_dependencies:
   flutter_test:
