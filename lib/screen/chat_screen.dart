@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:chat_gpt_exploring/chat_gpt_api/chat_gpt_sdk.dart';
 import 'package:chat_gpt_exploring/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({Key? key}) : super(key: key);
@@ -151,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            padding: const EdgeInsets.symmetric(vertical: 100.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

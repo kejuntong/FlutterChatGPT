@@ -22,7 +22,4 @@ final heroNav = BoxDecoration(
           spreadRadius: .5)
     ]);
 
-// TODO: kejun, github can detect api key leak and OpenAI wil automatically revoke the key
-const tokenPart1 = "sk-tD4LS0w636TAmxPOqXWsT3B";
-const tokenPart2 = "lbkFJueKHTb68xXXQcAqjmOBB";
-const token = tokenPart1 + tokenPart2;
+const token = "";
