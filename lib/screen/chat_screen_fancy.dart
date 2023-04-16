@@ -153,18 +153,12 @@ class _ChatScreenFancyState extends State<ChatScreenFancy> {
       Map.of({"role": "user", "content": userMessage})
     ], maxToken: 400, model: kChatGptTurboModel);
 
-    openAI
-        .onChatCompletionStream(request: request)
-        .asBroadcastStream()
-        .listen((res) {
-          String? replyMessageText = res?.choices.last.message.content;
-          if (replyMessageText != null) {
-            _updateMessage(replyMessageText, replyMessageId);
-          }
-
-    }).onError((err) {
-      _updateMessage(err.toString(), replyMessageId);
-    });
+    final response = await openAI.onChatCompletion(request: request).catchError(
+        (error) => _updateMessage(error.toString(), replyMessageId));
+    String? replyMessageText = response?.choices.last.message.content;
+    if (replyMessageText != null) {
+      _updateMessage(replyMessageText, replyMessageId);
+    }
   }
 
   void _updateMessage(String newMessage, String messageId) {
