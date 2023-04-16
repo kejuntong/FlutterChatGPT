@@ -17,6 +17,7 @@ class _GenImgScreenState extends State<GenImgScreen> {
   String img = "";
   late OpenAI openAI;
   StreamSubscription? subscription;
+  String? imgDescription;
 
   @override
   void initState() {
@@ -35,18 +36,18 @@ class _GenImgScreenState extends State<GenImgScreen> {
   }
 
   void _generateImage() async {
-    // TODO: kejun add input text field
-    const prompt = "beautiful girl";
 
-    // size 256 is $0.016 each image
-    // https://openai.com/pricing
-    final request = GenerateImage(prompt, 1,size: ImageSize.size256,responseFormat: Format.url);
-    subscription =
-        openAI.generateImageStream(request).asBroadcastStream().listen((it) {
-      setState(() {
-        img = "${it.data?.last?.url}";
-      });
-    });
+    if (imgDescription?.isNotEmpty == true) {
+      // size 256 is $0.016 each image
+      // https://openai.com/pricing
+      final request = GenerateImage(imgDescription!, 1,size: ImageSize.size256,responseFormat: Format.url);
+      subscription =
+          openAI.generateImageStream(request).asBroadcastStream().listen((it) {
+            setState(() {
+              img = "${it.data?.last?.url}";
+            });
+          });
+    }
   }
 
   @override
@@ -55,6 +56,20 @@ class _GenImgScreenState extends State<GenImgScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          TextFormField(
+            textInputAction: TextInputAction.done,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              filled: true,
+              hintText: 'Enter image description',
+              labelText: 'Image to generate',
+            ),
+            onChanged: (value) {
+              imgDescription = value;
+            },
+            maxLines: 5,
+          ),
+          SizedBox(height: 20),
           Center(
               child: ElevatedButton(
                   onPressed: () => _generateImage(),

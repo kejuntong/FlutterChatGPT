@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../app_theme.dart';
 import '../drawer/drawer_user_controller.dart';
 import '../drawer/home_drawer.dart';
-import 'examp_chat.dart';
+import 'chat_screen_fancy.dart';
 
 class NavigationScreen extends StatefulWidget {
   @override

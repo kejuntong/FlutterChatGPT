@@ -1,5 +1,5 @@
 import 'package:chat_gpt_exploring/screen/chat_screen.dart';
-import 'package:chat_gpt_exploring/screen/examp_chat.dart';
+import 'package:chat_gpt_exploring/screen/chat_screen_fancy.dart';
 import 'package:chat_gpt_exploring/screen/generate_img_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
