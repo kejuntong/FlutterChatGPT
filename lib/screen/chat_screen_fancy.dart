@@ -161,7 +161,7 @@ class _ChatScreenFancyState extends State<ChatScreenFancy> {
     }
   }
 
-  void _updateMessage(String newMessage, String messageId) {
+  _updateMessage(String newMessage, String messageId) {
     final index = _messages.indexWhere((element) => element.id == messageId);
     final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
       text: newMessage,
