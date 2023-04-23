@@ -6,139 +6,137 @@ import 'dart:ui' as ui;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../image_edit_service.dart';
+import '../image_processor.dart';
 
 class ImageEditScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _ImageEditScreenState();
 
-  final Uint8List imageBytes;
-  final Uint8List bgImageBytes;
-  final ui.Image image;
-  final ui.Image bgImage;
+  ImageEditScreen({super.key});
 
-  ImageEditScreen({
-    Key? key,
-    required this.imageBytes,
-    required this.bgImageBytes,
-    required this.image,
-    required this.bgImage,
-  }) : super(key: key);
-
-  GlobalKey bgImageKey = GlobalKey();
-  GlobalKey imageKey = GlobalKey();
-  GlobalKey bgImageEraserKey = GlobalKey();
   GlobalKey imageEraserKey = GlobalKey();
 }
 
 class _ImageEditScreenState extends State<ImageEditScreen> {
 
+  final loadImageController = StreamController<ui.Image?>();
   Uint8List? screenshot;
+
+
+  @override
+  void initState() {
+    super.initState();
+    loadImage();
+  }
+
+  loadImage() async {
+    final imageBytes = await ImageProcessor.getImageBytesAsset('assets/images/image-placeholder.jpg');
+    ui.decodeImageFromList(imageBytes, (result) async {
+      loadImageController.add(result);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.cyanAccent,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
-      floatingActionButton: Wrap(
-        direction: Axis.horizontal,
-        children: [
-          Center(
-            child: FittedBox(
-              child: SizedBox(
-                width: widget.image.width.toDouble(),
-                height: widget.image.height.toDouble(),
+    return StreamBuilder<ui.Image?>(
+      stream: loadImageController.stream,
+      builder: (context, snapshot) {
+        return snapshot.data == null ? Container() :
+        Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerTop,
+          floatingActionButton: Wrap(
+            direction: Axis.horizontal,
+            children: [
+              Center(
+                child: FittedBox(
+                  child: SizedBox(
+                    width: snapshot.data!.width.toDouble(),
+                    height: snapshot.data!.height.toDouble(),
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        return GestureDetector(
+                          onPanStart: (details) {
+                            final imageEditService =
+                            ref.read(imageEditProvider.notifier);
+                            imageEditService.startEdit(details.localPosition);
+                          },
+                          onPanUpdate: (details) {
+                            final imageEditService =
+                            ref.read(imageEditProvider.notifier);
+                            imageEditService.updateEdit(details.localPosition);
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  child: Consumer(
+                                    builder: (context, ref, child) {
+                                      final imageEditState =
+                                      ref.watch(imageEditProvider);
+                                      return RepaintBoundary(
+                                        key: widget.imageEraserKey,
+                                        child: ImageEditPaint(
+                                          canvasPaths: imageEditState.eraserPath,
+                                          image: snapshot.data!,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              screenshot == null ? const SizedBox(height: 30,) : Image.memory(screenshot!),
+              Center(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    return GestureDetector(
-                      onPanStart: (details) {
-                        final imageEditService =
-                        ref.read(imageEditProvider.notifier);
-                        imageEditService.startEdit(details.localPosition);
-                      },
-                      onPanUpdate: (details) {
-                        final imageEditService =
-                        ref.read(imageEditProvider.notifier);
-                        imageEditService.updateEdit(details.localPosition);
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        child: Stack(
-                          children: [
-                            // Positioned.fill(
-                            //   child: RepaintBoundary(
-                            //     key: bgImageKey,
-                            //     child: ImageEditPaint(
-                            //       canvasPaths: [],
-                            //       image: bgImage,
-                            //     ),
-                            //   ),
-                            // ),
-                            Positioned.fill(
-                              child: Consumer(
-                                builder: (context, ref, child) {
-                                  final imageEditState =
-                                  ref.watch(imageEditProvider);
-                                  return RepaintBoundary(
-                                    key: widget.imageEraserKey,
-                                    child: ImageEditPaint(
-                                      canvasPaths: imageEditState.eraserPath,
-                                      image: widget.image,
-                                    ),
-                                  );
-                                },
-                              ),
+                    return Row(
+                      children: [
+                        ElevatedButton(
+                          child: const Text(
+                            'undo',
+                            style: TextStyle(
+                              fontSize: 25,
                             ),
-                          ],
+                          ),
+                          onPressed: () {
+                            final imageEditService =
+                            ref.read(imageEditProvider.notifier);
+                            imageEditService.undo();
+                          },
                         ),
-                      ),
+                        const SizedBox(width: 10,),
+                        ElevatedButton(
+                          child: const Text(
+                            'test screenshot',
+                            style: TextStyle(
+                              fontSize: 25,
+                            ),
+                          ),
+                          onPressed: () async {
+                            Uint8List imageBytes = await takeScreenShot(widget.imageEraserKey);
+                            setState(() {
+                              screenshot = imageBytes;
+                            });
+                          },
+                        ),
+                      ],
                     );
                   },
                 ),
               ),
-            ),
+            ],
           ),
-          screenshot == null ? const SizedBox(height: 30,) : Image.memory(screenshot!),
-          Center(
-            child: Consumer(
-              builder: (context, ref, child) {
-                return Row(
-                  children: [
-                    ElevatedButton(
-                      child: const Text(
-                        'undo',
-                        style: TextStyle(
-                          fontSize: 25,
-                        ),
-                      ),
-                      onPressed: () {
-                        final imageEditService =
-                        ref.read(imageEditProvider.notifier);
-                        imageEditService.undo();
-                      },
-                    ),
-                    const SizedBox(width: 10,),
-                    ElevatedButton(
-                      child: const Text(
-                        'test screenshot',
-                        style: TextStyle(
-                          fontSize: 25,
-                        ),
-                      ),
-                      onPressed: () async {
-                        Uint8List imageBytes = await takeScreenShot(widget.imageEraserKey);
-                        setState(() {
-                          screenshot = imageBytes;
-                        });
-                      },
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
+        );
+      }
     );
   }
 

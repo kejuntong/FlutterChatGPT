@@ -44,6 +44,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         icon: Icon(Icons.image),
       ),
       DrawerList(
+        index: DrawerIndex.IMAGE_EDIT,
+        labelName: 'Image Edit',
+        icon: Icon(Icons.edit),
+      ),
+      DrawerList(
         index: DrawerIndex.MORE,
         labelName: 'More to come...',
         icon: Icon(Icons.more),
@@ -221,6 +226,7 @@ enum DrawerIndex {
   HOME,
   CHAT,
   IMAGE_GEN,
+  IMAGE_EDIT,
   MORE
 }
 
