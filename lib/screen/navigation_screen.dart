@@ -1,4 +1,5 @@
 import 'package:chat_gpt_exploring/screen/chat_screen.dart';
+import 'package:chat_gpt_exploring/screen/edit_img_screen.dart';
 import 'package:chat_gpt_exploring/screen/generate_img_screen.dart';
 import 'package:chat_gpt_exploring/screen/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -64,7 +65,8 @@ class _NavigationScreenState extends State<NavigationScreen> {
           break;
         case DrawerIndex.IMAGE_GEN:
           setState(() {
-            screenView = GenImgScreen();
+            // screenView = GenImgScreen();
+            screenView = EditImgScreen();
           });
           break;
         case DrawerIndex.MORE:
